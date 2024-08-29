@@ -9,7 +9,7 @@ SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Model
 
 
 
-### 🎉🎉 with WavTokenizer, you can represent speech, music, and audio with only 40 tokens one second!
+### 🎉🎉 with WavTokenizer, you can represent speech, music, and audio with only 40 tokens per second!
 ### 🎉🎉 with WavTokenizer, You can get strong reconstruction results.
 ### 🎉🎉 WavTokenizer owns rich semantic information and is build for audio language models such as GPT4-o.
 
