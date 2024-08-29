@@ -98,7 +98,7 @@ audio_out = wavtokenizer.decode(features, bandwidth_id=bandwidth_id)
 ## Available models
 🤗 links to the Huggingface model hub.
 
-| Model name                                                          |                                                                                                            HuggingFace                                                                                                             |  Corpus  |  aa  | Parameters | Open-Source |
+| Model name                                                          |                                                                                                            HuggingFace                                                                                                             |  Corpus  |  Token/s  | Domain | Open-Source |
 |:--------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------:|:---------:|:----------:|:------:|
 | WavTokenizer-small-600-24k-4096             |             [🤗](https://huggingface.co/novateur/WavTokenizer/blob/main/WavTokenizer_small_600_24k_4096.ckpt)    | LibriTTS  | 40  |  Speech  | √ |
 | WavTokenizer-small-320-24k-4096             |             [🤗](https://huggingface.co/novateur/WavTokenizer/blob/main/WavTokenizer_small_320_24k_4096.ckpt)     | LibriTTS  | 75 |  Speech  | √|
