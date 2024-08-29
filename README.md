@@ -5,7 +5,7 @@ SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Model
 
 [![arXiv](https://img.shields.io/badge/arXiv-Paper-<COLOR>.svg)](https://github.com/jishengpeng/wavtokenizer)
 [![demo](https://img.shields.io/badge/WanTokenizer-Demo-red)](https://wavtokenizer.github.io/)
-[![model](https://img.shields.io/badge/%F0%9F%A4%97%20WavTokenizer-Models-blue)](https://github.com/jishengpeng/wavtokenizer)
+[![model](https://img.shields.io/badge/%F0%9F%A4%97%20WavTokenizer-Models-blue)](https://huggingface.co/novateur/WavTokenizer)
 
 
 
@@ -100,8 +100,8 @@ audio_out = wavtokenizer.decode(features, bandwidth_id=bandwidth_id)
 
 | Model name                                                          |                                                                                                            HuggingFace                                                                                                             |  Corpus  |  aa  | Parameters | Open-Source |
 |:--------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:--------:|:---------:|:----------:|:------:|
-| WavTokenizer-small-600-24k-4096             |             [🤗](https://github.com/jishengpeng/wavtokenizer)    | LibriTTS  | 40  |  Speech  | √ |
-| WavTokenizer-small-320-24k-4096             |             [🤗](https://github.com/jishengpeng/wavtokenizer)     | LibriTTS  | 75 |  Speech  | √|
+| WavTokenizer-small-600-24k-4096             |             [🤗](https://huggingface.co/novateur/WavTokenizer/blob/main/WavTokenizer_small_600_24k_4096.ckpt)    | LibriTTS  | 40  |  Speech  | √ |
+| WavTokenizer-small-320-24k-4096             |             [🤗](https://huggingface.co/novateur/WavTokenizer/blob/main/WavTokenizer_small_320_24k_4096.ckpt)     | LibriTTS  | 75 |  Speech  | √|
 | WavTokenizer-medium-600-24k-4096               |               [🤗](https://github.com/jishengpeng/wavtokenizer)         | 10000 Hours | 40  |  Speech, Audio, Music  | Coming Soon|
 | WavTokenizer-medium-320-24k-4096                 |               [🤗](https://github.com/jishengpeng/wavtokenizer)         | 10000 Hours | 75 |  Speech, Audio, Music  | Coming Soon|
 | WavTokenizer-large-600-24k-4096 | [🤗](https://github.com/jishengpeng/wavtokenizer) | LibriTTS | 40 |   Speech, Audio, Music   | Coming Soon|
