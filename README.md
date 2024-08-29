@@ -1,5 +1,5 @@
 # WavTokenizer
-SOTA discrete codec models with forty tokens per second for audio language modeling 
+SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Modeling 
 
 
 
