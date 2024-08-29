@@ -104,7 +104,7 @@ audio_out = wavtokenizer.decode(features, bandwidth_id=bandwidth_id)
 | WavTokenizer-small-320-24k-4096             |             [🤗](https://huggingface.co/novateur/WavTokenizer/blob/main/WavTokenizer_small_320_24k_4096.ckpt)     | LibriTTS  | 75 |  Speech  | √|
 | WavTokenizer-medium-600-24k-4096               |               [🤗](https://github.com/jishengpeng/wavtokenizer)         | 10000 Hours | 40  |  Speech, Audio, Music  | Coming Soon|
 | WavTokenizer-medium-320-24k-4096                 |               [🤗](https://github.com/jishengpeng/wavtokenizer)         | 10000 Hours | 75 |  Speech, Audio, Music  | Coming Soon|
-| WavTokenizer-large-600-24k-4096 | [🤗](https://github.com/jishengpeng/wavtokenizer) | LibriTTS | 40 |   Speech, Audio, Music   | Coming Soon|
+| WavTokenizer-large-600-24k-4096 | [🤗](https://github.com/jishengpeng/wavtokenizer) | 80000 Hours | 40 |   Speech, Audio, Music   | Coming Soon|
 | WavTokenizer-large-320-24k-4096   | [🤗](https://github.com/jishengpeng/wavtokenizer) | 80000 Hours | 75 |   Speech, Audio, Music   | Comming Soon |
 
       
