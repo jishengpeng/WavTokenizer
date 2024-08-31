@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Modeling"
 authors = [
     { name = "Shengpeng Ji" },
-
+    { name = "Sam Avery", email = "averysam2@gmail.com" }
 ]
 license = { text = "MIT" }
 readme = "README.md"
