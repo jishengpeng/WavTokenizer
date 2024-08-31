@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wavtokenizer"
+version = "0.1.0"
+description = "SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Modeling"
+authors = [
+    { name = "Shengpeng Ji" },
+
+]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.6"
+keywords = ["speech", "audio", "tokenizer", "deep learning", "pytorch"]
+dependencies = [
+    "torch==2.0.0",
+    "torchaudio==2.0.1",
+    "scipy==1.10.1",
+    "einops==0.6.1",
+    "pyyaml==6.0",
+    "huggingface_hub==0.23.0",
+    "encodec==0.1.1",
+    "matplotlib==3.7.1",
+    "transformers==4.28.1",
+    "pytorch-lightning==1.8.6",
+    "tensorboardX==2.6",
+    "soundfile==0.12.1",
+    "numpy==1.23.5",
+    "jsonargparse[signatures]>=4.15.2",
+    "fairseq",
+    "torchcrepe",
+    "librosa",
+    "pesq"
+]
+
+[project.urls]
+"Homepage" = "https://github.com/jishengpeng/WavTokenizer"
+"Documentation" = "https://github.com/jishengpeng/WavTokenizer#readme"
+"Source Code" = "https://github.com/jishengpeng/WavTokenizer"
+"Paper" = "https://arxiv.org/abs/2408.16532"
+"Demo" = "https://wavtokenizer.github.io/"
