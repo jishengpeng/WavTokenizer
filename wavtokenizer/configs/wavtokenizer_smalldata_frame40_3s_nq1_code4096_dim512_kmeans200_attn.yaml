@@ -11,7 +11,7 @@ data:
       num_workers: 8
 
     val_params:
-      filelist_path: ./data/infer/librttts_val
+      filelist_path: ./data/infer/libritts_val
       sampling_rate: 24000
       num_samples: 72000
       batch_size: 5   # 10
@@ -66,15 +66,15 @@ model:
 
 trainer:
   logger:
-    class_path: pytorch_lightning.loggers.TensorBoardLogger
+    class_path: lightning.pytorch.loggers.TensorBoardLogger
     init_args:
       save_dir: ./result/train/wavtokenizer_smalldata_frame40_3s_nq1_code4096_dim512_kmeans200_attn/
   callbacks:
-    - class_path: pytorch_lightning.callbacks.LearningRateMonitor
-    - class_path: pytorch_lightning.callbacks.ModelSummary
+    - class_path: lightning.pytorch.callbacks.LearningRateMonitor
+    - class_path: lightning.pytorch.callbacks.ModelSummary
       init_args:
         max_depth: 2
-    - class_path: pytorch_lightning.callbacks.ModelCheckpoint
+    - class_path: lightning.pytorch.callbacks.ModelCheckpoint
       init_args:
         monitor: val_loss
         filename: wavtokenizer_checkpoint_{epoch}_{step}_{val_loss:.4f}

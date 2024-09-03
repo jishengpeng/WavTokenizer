@@ -1,7 +1,7 @@
 import os
 
 import fairseq
-import pytorch_lightning as pl
+import lightning as pl
 import requests
 import torch
 import torch.nn as nn

@@ -1,7 +1,7 @@
 import math
 
 import numpy as np
-import pytorch_lightning as pl
+import lightning as pl
 import torch
 import torchaudio
 import transformers
@@ -118,19 +118,18 @@ class VocosExp(pl.LightningModule):
         audio_output = self.head(x)
         return audio_output, commit_loss
 
-    def training_step(self, batch, batch_idx, optimizer_idx, **kwargs):
+    def training_step(self, batch, batch_idx, **kwargs):
         audio_input = batch
+        opt_disc, opt_gen = self.optimizers()
 
-        # train discriminator
-        if optimizer_idx == 0 and self.train_discriminator:
+        if self.global_step % 2 == 0 and self.train_discriminator:
             with torch.no_grad():
                 audio_hat, _ = self(audio_input, **kwargs)
 
+            loss_dac = self.dacdiscriminator.discriminator_loss(audio_hat.unsqueeze(1), audio_input.unsqueeze(1))
 
-            loss_dac=self.dacdiscriminator.discriminator_loss(audio_hat.unsqueeze(1),audio_input.unsqueeze(1))
-
-            real_score_mp, gen_score_mp, _, _ = self.multiperioddisc(y=audio_input, y_hat=audio_hat, **kwargs,)
-            real_score_mrd, gen_score_mrd, _, _ = self.multiresddisc(y=audio_input, y_hat=audio_hat, **kwargs,)
+            real_score_mp, gen_score_mp, _, _ = self.multiperioddisc(y=audio_input, y_hat=audio_hat, **kwargs)
+            real_score_mrd, gen_score_mrd, _, _ = self.multiresddisc(y=audio_input, y_hat=audio_hat, **kwargs)
             loss_mp, loss_mp_real, _ = self.disc_loss(
                 disc_real_outputs=real_score_mp, disc_generated_outputs=gen_score_mp
             )
@@ -141,24 +140,23 @@ class VocosExp(pl.LightningModule):
             loss_mrd /= len(loss_mrd_real)
             loss = loss_mp + self.hparams.mrd_loss_coeff * loss_mrd + loss_dac
 
+            opt_disc.zero_grad()
+            self.manual_backward(loss)
+            opt_disc.step()
+
             self.log("discriminator/total", loss, prog_bar=True)
             self.log("discriminator/multi_period_loss", loss_mp)
             self.log("discriminator/multi_res_loss", loss_mrd)
             self.log("discriminator/dac", loss_dac)
             return loss
 
-        # train generator
-        if optimizer_idx == 1:
+        if self.global_step % 2 == 1:
             audio_hat, commit_loss = self(audio_input, **kwargs)
             if self.train_discriminator:
 
-                loss_dac_1,loss_dac_2 = self.dacdiscriminator.generator_loss(audio_hat.unsqueeze(1),audio_input.unsqueeze(1))
-                _, gen_score_mp, fmap_rs_mp, fmap_gs_mp = self.multiperioddisc(
-                    y=audio_input, y_hat=audio_hat, **kwargs,
-                )
-                _, gen_score_mrd, fmap_rs_mrd, fmap_gs_mrd = self.multiresddisc(
-                    y=audio_input, y_hat=audio_hat, **kwargs,
-                )
+                loss_dac_1, loss_dac_2 = self.dacdiscriminator.generator_loss(audio_hat.unsqueeze(1), audio_input.unsqueeze(1))
+                _, gen_score_mp, fmap_rs_mp, fmap_gs_mp = self.multiperioddisc(y=audio_input, y_hat=audio_hat, **kwargs)
+                _, gen_score_mrd, fmap_rs_mrd, fmap_gs_mrd = self.multiresddisc(y=audio_input, y_hat=audio_hat, **kwargs)
                 loss_gen_mp, list_loss_gen_mp = self.gen_loss(disc_outputs=gen_score_mp)
                 loss_gen_mrd, list_loss_gen_mrd = self.gen_loss(disc_outputs=gen_score_mrd)
                 loss_gen_mp = loss_gen_mp / len(list_loss_gen_mp)
@@ -186,6 +184,10 @@ class VocosExp(pl.LightningModule):
                 + loss_dac_1
                 + loss_dac_2
             )
+
+            opt_gen.zero_grad()
+            self.manual_backward(loss)
+            opt_gen.step()
 
             self.log("generator/total_loss", loss, prog_bar=True)
             self.log("mel_loss_coeff", self.mel_loss_coeff)
@@ -257,7 +259,7 @@ class VocosExp(pl.LightningModule):
         mel_loss = self.melspec_loss(audio_hat.unsqueeze(1), audio_input.unsqueeze(1))
         total_loss = mel_loss + (5 - utmos_score) + (5 - pesq_score) + 1000 * commit_loss
 
-        return {
+        self.validation_step_outputs.append({
             "val_loss": total_loss,
             "mel_loss": mel_loss,
             "utmos_score": utmos_score,
@@ -267,11 +269,15 @@ class VocosExp(pl.LightningModule):
             "f1_score": f1_score,
             "audio_input": audio_input[0],
             "audio_pred": audio_hat[0],
-        }
+        })
 
-    def validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self):
         if self.global_rank == 0:
-            *_, audio_in, audio_pred = outputs[0].values()
+            all_audio_inputs = [x["audio_input"] for x in self.validation_step_outputs]
+            all_audio_preds = [x["audio_pred"] for x in self.validation_step_outputs]
+            audio_in = all_audio_inputs[0]
+            audio_pred = all_audio_preds[0]
+
             self.logger.experiment.add_audio(
                 "val_in", audio_in.data.cpu().numpy(), self.global_step, self.hparams.sample_rate
             )
@@ -292,13 +298,14 @@ class VocosExp(pl.LightningModule):
                 self.global_step,
                 dataformats="HWC",
             )
-        avg_loss = torch.stack([x["val_loss"] for x in outputs]).mean()
-        mel_loss = torch.stack([x["mel_loss"] for x in outputs]).mean()
-        utmos_score = torch.stack([x["utmos_score"] for x in outputs]).mean()
-        pesq_score = torch.stack([x["pesq_score"] for x in outputs]).mean()
-        periodicity_loss = np.array([x["periodicity_loss"] for x in outputs]).mean()
-        pitch_loss = np.array([x["pitch_loss"] for x in outputs]).mean()
-        f1_score = np.array([x["f1_score"] for x in outputs]).mean()
+
+        avg_loss = torch.stack([x["val_loss"] for x in self.validation_step_outputs]).mean()
+        mel_loss = torch.stack([x["mel_loss"] for x in self.validation_step_outputs]).mean()
+        utmos_score = torch.stack([x["utmos_score"] for x in self.validation_step_outputs]).mean()
+        pesq_score = torch.stack([x["pesq_score"] for x in self.validation_step_outputs]).mean()
+        periodicity_loss = np.array([x["periodicity_loss"] for x in self.validation_step_outputs]).mean()
+        pitch_loss = np.array([x["pitch_loss"] for x in self.validation_step_outputs]).mean()
+        f1_score = np.array([x["f1_score"] for x in self.validation_step_outputs]).mean()
 
         self.log("val_loss", avg_loss, sync_dist=True)
         self.log("val/mel_loss", mel_loss, sync_dist=True)
@@ -307,6 +314,8 @@ class VocosExp(pl.LightningModule):
         self.log("val/periodicity_loss", periodicity_loss, sync_dist=True)
         self.log("val/pitch_loss", pitch_loss, sync_dist=True)
         self.log("val/f1_score", f1_score, sync_dist=True)
+
+        self.validation_step_outputs.clear()
 
     @property
     def global_step(self):
@@ -380,6 +389,9 @@ class WavTokenizer(VocosExp):
             evaluate_periodicty,
             resume
         )
+        self.automatic_optimization = False
+        self.validation_step_outputs = []
+
         # Override with conditional discriminators
         # VocosExp.__init__(self, feature_extractor, backbone, head, resume_config, resume_model)
         # if self.resume:
@@ -456,19 +468,17 @@ class WavTokenizer(VocosExp):
         return output
 
     def validation_step(self, *args):
-        # print('-------------------valid--------------------')
         bandwidth_id = torch.tensor([0], device=self.device)
-        output = super().validation_step(*args, bandwidth_id=bandwidth_id)
-        return output
+        return super().validation_step(*args, bandwidth_id=bandwidth_id)
 
-    def validation_epoch_end(self, outputs):
+    def on_validation_epoch_end(self):
         if self.global_rank == 0:
-            *_, audio_in, _ = outputs[0].values()
-            # Resynthesis with encodec for reference
+            *_, audio_in, _ = self.validation_step_outputs[0].values()
             self.feature_extractor.encodec.set_target_bandwidth(self.feature_extractor.bandwidths[0])
             encodec_audio = self.feature_extractor.encodec(audio_in[None, None, :])
             self.logger.experiment.add_audio(
                 "encodec", encodec_audio[0, 0].data.cpu().numpy(), self.global_step, self.hparams.sample_rate,
             )
 
-        super().validation_epoch_end(outputs)
+        super().on_validation_epoch_end()
+        self.validation_step_outputs.clear()

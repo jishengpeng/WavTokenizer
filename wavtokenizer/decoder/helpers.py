@@ -2,7 +2,7 @@ import matplotlib
 import numpy as np
 import torch
 from matplotlib import pyplot as plt
-from pytorch_lightning import Callback
+from lightning import Callback
 
 matplotlib.use("Agg")
 
