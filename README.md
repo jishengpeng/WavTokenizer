@@ -16,7 +16,7 @@ SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Model
 # 🔥 News
 - *2024.08*: We release WavTokenizer on arxiv.
 
-![result](result.png)
+![result](assets/result.png)
 
 
 ## Installation
@@ -24,9 +24,7 @@ SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Model
 To use WavTokenizer, install it using:
 
 ```bash
-conda create -n wavtokenizer python=3.9
-conda activate wavtokenizer
-pip install -r requirements.txt
+pip install git+https://github.com/Tomiinek/WavTokenizer
 ```
 
 ## Infer
@@ -35,28 +33,26 @@ pip install -r requirements.txt
 
 ```python
 
-from encoder.utils import convert_audio
-import torchaudio
 import torch
-from decoder.pretrained import WavTokenizer
+import torchaudio
+from wavtokenizer import convert_audio, WavTokenizer
 
-
-device=torch.device('cpu')
-
-config_path = "./configs/xxx.yaml"
-model_path = "./xxx.ckpt"
+device = 'cpu'
+config_path = "configs/xxx.yaml"
+model_path = "checkpoints/xxx.ckpt"
 audio_outpath = "xxx"
 
 wavtokenizer = WavTokenizer.from_pretrained0802(config_path, model_path)
 wavtokenizer = wavtokenizer.to(device)
 
-
 wav, sr = torchaudio.load(audio_path)
 wav = convert_audio(wav, sr, 24000, 1) 
+wav = wav.to(device)
+
 bandwidth_id = torch.tensor([0])
-wav=wav.to(device)
-features,discrete_code= wavtokenizer.encode_infer(wav, bandwidth_id=bandwidth_id)
+features, discrete_code = wavtokenizer.encode_infer(wav, bandwidth_id=bandwidth_id)
 audio_out = wavtokenizer.decode(features, bandwidth_id=bandwidth_id) 
+
 torchaudio.save(audio_outpath, audio_out, sample_rate=24000, encoding='PCM_S', bits_per_sample=16)
 ```
 
@@ -64,32 +60,30 @@ torchaudio.save(audio_outpath, audio_out, sample_rate=24000, encoding='PCM_S', b
 ### Part2: Generating discrete codecs
 ```python
 
-from encoder.utils import convert_audio
-import torchaudio
 import torch
-from decoder.pretrained import WavTokenizer
+import torchaudio
+from wavtokenizer import convert_audio, WavTokenizer
 
-device=torch.device('cpu')
-
-config_path = "./configs/xxx.yaml"
-model_path = "./xxx.ckpt"
+device = 'cpu'
+config_path = "configs/xxx.yaml"
+model_path = "checkpoints/xxx.ckpt"
 
 wavtokenizer = WavTokenizer.from_pretrained0802(config_path, model_path)
 wavtokenizer = wavtokenizer.to(device)
 
 wav, sr = torchaudio.load(audio_path)
 wav = convert_audio(wav, sr, 24000, 1) 
+wav = wav.to(device)
+
 bandwidth_id = torch.tensor([0])
-wav=wav.to(device)
-_,discrete_code= wavtokenizer.encode_infer(wav, bandwidth_id=bandwidth_id)
-print(discrete_code)
+_, discrete_code = wavtokenizer.encode_infer(wav, bandwidth_id=bandwidth_id)
 ```
 
 
 
 ### Part3: Audio reconstruction through codecs
 ```python
-# audio_tokens [n_q,1,t]/[n_q,t]
+# audio_tokens [n_q,1,t] / [n_q,t]
 features = wavtokenizer.codes_to_features(audio_tokens)
 bandwidth_id = torch.tensor([0])  
 audio_out = wavtokenizer.decode(features, bandwidth_id=bandwidth_id)
@@ -107,18 +101,17 @@ audio_out = wavtokenizer.decode(features, bandwidth_id=bandwidth_id)
 | WavTokenizer-large-600-24k-4096 | [🤗](https://github.com/jishengpeng/wavtokenizer) | 80000 Hours | 40 |   Speech, Audio, Music   | Coming Soon|
 | WavTokenizer-large-320-24k-4096   | [🤗](https://github.com/jishengpeng/wavtokenizer) | 80000 Hours | 75 |   Speech, Audio, Music   | Coming Soon |
 
-      
 
 ## Training
 
 ### Step1: Prepare train dataset
 ```python
-# Process the data into a form similar to ./data/demo.txt
+# Process the data into a form similar to data/demo.txt
 ```
 
 ### Step2: Modifying configuration files
 ```python
-# ./configs/xxx.yaml
+# configs/xxx.yaml
 # Modify the values of parameters such as batch_size, filelist_path, save_dir, device
 ```
 
@@ -127,8 +120,7 @@ Refer to [Pytorch Lightning documentation](https://lightning.ai/docs/pytorch/sta
 training pipeline.
 
 ```bash
-cd ./WavTokenizer
-python train.py fit --config ./configs/xxx.yaml
+python scripts/train.py fit --config configs/xxx.yaml
 ```
 
 
