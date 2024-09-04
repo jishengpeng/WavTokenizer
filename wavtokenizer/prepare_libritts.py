@@ -5,16 +5,13 @@ def download_and_extract(url, target_dir):
     """Downloads and extracts a tar.gz file from a URL into the target directory."""
     os.makedirs(target_dir, exist_ok=True)
     
-    # Determine the extraction directory name from the URL
-    extract_dir = os.path.join(target_dir, "LibriTTS", os.path.basename(url).replace(".tar.gz", ""))
+    # The tar file should be downloaded into the top-level directory (e.g., infer or train)
+    tar_filename = os.path.join(target_dir, os.path.basename(url))
     
     # Check if the dataset is already extracted
-    if os.path.exists(extract_dir) and os.listdir(extract_dir):
-        print(f"{extract_dir} already exists and is not empty, skipping download and extraction.")
+    if os.path.exists(tar_filename.replace(".tar.gz", "")) and os.listdir(tar_filename.replace(".tar.gz", "")):
+        print(f"{tar_filename.replace('.tar.gz', '')} already exists and is not empty, skipping download and extraction.")
         return
-    
-    # If not, download and extract
-    tar_filename = os.path.join(target_dir, os.path.basename(url))
     
     # Download the tar file if it doesn't exist
     if not os.path.exists(tar_filename):
@@ -23,9 +20,9 @@ def download_and_extract(url, target_dir):
     else:
         print(f"{tar_filename} already exists, skipping download.")
     
-    # Extract the tar file
+    # Extract the tar file into the parent directory (not creating nested dirs)
     print(f"Extracting {tar_filename}...")
-    subprocess.run(['tar', '-xzvf', tar_filename, '-C', os.path.join(target_dir, "LibriTTS")], check=True)
+    subprocess.run(['tar', '-xzvf', tar_filename, '-C', target_dir], check=True)
 
 def generate_filelist(extraction_subdir, output_file):
     """Generates a file list from a directory of audio files."""
@@ -51,22 +48,26 @@ def main():
     train_extraction_subdir = os.path.join(train_dir, "LibriTTS", "train-clean-100")
     val_extraction_subdir = os.path.join(val_dir, "LibriTTS", "dev-clean")
 
-    # Download and extract the datasets, if necessary
-    print(f"Checking training data in {train_extraction_subdir}...")
-    download_and_extract(train_url, train_dir)
+    # Skip processing if the train or infer directory already exists
+    if os.path.exists(train_extraction_subdir) and os.listdir(train_extraction_subdir):
+        print(f"{train_extraction_subdir} already exists, skipping training data preparation.")
+    else:
+        print(f"Checking training data in {train_extraction_subdir}...")
+        download_and_extract(train_url, train_dir)
+        generate_filelist(train_extraction_subdir, os.path.join(train_dir, "libritts_train"))
 
-    print(f"Checking validation data in {val_extraction_subdir}...")
-    download_and_extract(val_url, val_dir)
-
-    # Generate file lists with the specified names
-    print("Generating file lists...")
-    generate_filelist(train_extraction_subdir, os.path.join(train_dir, "libritts_train"))
-    generate_filelist(val_extraction_subdir, os.path.join(val_dir, "libritts_val"))
+    if os.path.exists(val_extraction_subdir) and os.listdir(val_extraction_subdir):
+        print(f"{val_extraction_subdir} already exists, skipping validation data preparation.")
+    else:
+        print(f"Checking validation data in {val_extraction_subdir}...")
+        download_and_extract(val_url, val_dir)
+        generate_filelist(val_extraction_subdir, os.path.join(val_dir, "libritts_val"))
 
     print("Dataset preparation complete.")
 
 if __name__ == "__main__":
     main()
+
 
 """
 wavtokenizer/
