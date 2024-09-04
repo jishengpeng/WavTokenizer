@@ -7,7 +7,7 @@ data:
       filelist_path: ./data/train/libritts_train
       sampling_rate: 24000
       num_samples: 72000
-      batch_size: 5  # 20
+      batch_size: 40  # 20
       num_workers: 8
 
     val_params:
@@ -88,6 +88,6 @@ trainer:
   # You might want to limit val batches when evaluating all the metrics, as they are time-consuming
   limit_val_batches: 100
   accelerator: gpu
-  strategy: auto #ddp
-  devices: 1 #[0,1,2,3,4,5,6,7]
+  strategy: ddp
+  devices: [0,1,2,3,4,5,6,7]
   log_every_n_steps: 1000
