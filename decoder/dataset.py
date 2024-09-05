@@ -64,8 +64,8 @@ class VocosDataset(Dataset):
         #     y = y.mean(dim=0, keepdim=True)
         if y.ndim > 2:
             # mix to mono
-            print("有问题哈,数据处理部分")
-            y = y.mean(dim=1, keepdim=False)
+            # print("有问题哈,数据处理部分")
+            y = y.mean(dim=-1, keepdim=False)
         gain = np.random.uniform(-1, -6) if self.train else -3
         y, _ = torchaudio.sox_effects.apply_effects_tensor(y, sr, [["norm", f"{gain:.2f}"]])
         if sr != self.sampling_rate:
