@@ -87,6 +87,7 @@ class VocosExp(pl.LightningModule):
         disc_params = [
             {"params": self.multiperioddisc.parameters()},
             {"params": self.multiresddisc.parameters()},
+            {"params": self.dac.parameters()},
         ]
         gen_params = [
             {"params": self.feature_extractor.parameters()},
@@ -385,6 +386,7 @@ class WavTokenizer(VocosExp):
         #     VocosExp.load_from_checkpoint(self.resume_model)
         self.multiperioddisc = MultiPeriodDiscriminator(num_embeddings=len(self.feature_extractor.bandwidths))
         self.multiresddisc = MultiResolutionDiscriminator(num_embeddings=len(self.feature_extractor.bandwidths))
+        self.dac = DACDiscriminator()
         if self.resume:
             print('加载预训练模型:', self.resume_model)
             # with open(self.resume_config, "r") as f:
@@ -402,6 +404,7 @@ class WavTokenizer(VocosExp):
             state_dict_hd = dict()
             state_dict_mp = dict()
             state_dict_mr = dict()
+            state_dict_dac = dict()
             for k, v in state_dict_raw.items():
                 # breakpoint()
                 if k.startswith('feature_extractor.encodec.quantizer'):
@@ -425,10 +428,13 @@ class WavTokenizer(VocosExp):
                     state_dict_mp[k[16:]] = v
                 if k.startswith('multiresddisc.'):
                     state_dict_mr[k[14:]] = v
+                if k.startswith('dac.'):
+                    state_dict_dac[k[4:]] = v
             # breakpoint()
             # feature_extractor.encodec.quantizer.load_state_dict(state_dict_fa_qa, strict=True)
             feature_extractor.encodec.encoder.load_state_dict(state_dict_fa_en, strict=True)
             feature_extractor.encodec.decoder.load_state_dict(state_dict_fa_de, strict=True)
+            feature_extractor.encodec.quantizer.load_state_dict(state_dict_fa_qa, strict=True)
             backbone.load_state_dict(state_dict_bb, strict=True)
             head.load_state_dict(state_dict_hd, strict=True)
             self.feature_extractor = feature_extractor.to(self.device)
@@ -436,6 +442,7 @@ class WavTokenizer(VocosExp):
             self.head = head.to(self.device)
             self.multiperioddisc.load_state_dict(state_dict_mp, strict=True)
             self.multiresddisc.load_state_dict(state_dict_mr, strict=True)
+            self.dac.load_state_dict(state_dict_dac, strict=True)
 
     def training_step(self, *args):
         # print('-------------------train--------------------')
