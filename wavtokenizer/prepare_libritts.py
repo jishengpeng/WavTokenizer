@@ -41,12 +41,15 @@ def main():
     # Define download URLs
     train_url = "http://www.openslr.org/resources/60/train-clean-100.tar.gz"
     val_url = "http://www.openslr.org/resources/60/dev-clean.tar.gz"
+    test_url = "http://www.openslr.org/resources/60/test-clean.tar.gz"
 
     # Define target directories and extraction subdirectories
     train_dir = "./data/train"
     val_dir = "./data/infer"
+    test_dir = "./data/infer"
     train_extraction_subdir = os.path.join(train_dir, "LibriTTS", "train-clean-100")
     val_extraction_subdir = os.path.join(val_dir, "LibriTTS", "dev-clean")
+    test_extraction_subdir = os.path.join(test_dir, "LibriTTS", "test-clean")
 
     # Skip processing if the train or infer directory already exists
     if os.path.exists(train_extraction_subdir) and os.listdir(train_extraction_subdir):
@@ -62,6 +65,13 @@ def main():
         print(f"Checking validation data in {val_extraction_subdir}...")
         download_and_extract(val_url, val_dir)
         generate_filelist(val_extraction_subdir, os.path.join(val_dir, "libritts_val"))
+
+    if os.path.exists(test_extraction_subdir) and os.listdir(test_extraction_subdir):
+        print(f"{test_extraction_subdir} already exists, skipping test data preparation.")
+    else:
+        print(f"Checking test data in {test_extraction_subdir}...")
+        download_and_extract(test_url, test_dir)
+        generate_filelist(test_extraction_subdir, os.path.join(test_dir, "libritts_testclean"))
 
     print("Dataset preparation complete.")
 
@@ -84,10 +94,7 @@ wavtokenizer/
 │   └── infer/
 │       ├── LibriTTS/
 │       │   └── dev-clean/
-│       │       ├── <speaker_id>/
-│       │       │   ├── <chapter_id>/
-│       │       │   │   ├── <audio_files>.wav
-│       │       │   │   └── ...
-│       │       └── ...
-│       └── libritts_val  # File list generated here
+│       |   └── test-clean/
+│       └── libritts_val
+|       └── libritts_testclean
 """
