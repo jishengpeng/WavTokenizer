@@ -34,7 +34,7 @@ model:
 
     resume: false
     resume_config: ./WavTokenizer/configs/wavtokenizer_smalldata_frame40_3s_nq1_code16384_dim512_kmeans800_attn.yaml
-    resume_model: ./version_3/checkpoints/vocos_checkpoint_epoch=31_step=157696_val_loss=5.9855.ckpt
+    resume_model: ./version_3/checkpoints/xxx.ckpt
 
     feature_extractor:
       class_path: decoder.feature_extractors.EncodecFeatures
@@ -77,7 +77,7 @@ trainer:
     - class_path: pytorch_lightning.callbacks.ModelCheckpoint
       init_args:
         monitor: val_loss
-        filename: vocos_checkpoint_{epoch}_{step}_{val_loss:.4f}
+        filename: wavtokenizer_checkpoint_{epoch}_{step}_{val_loss:.4f}
         save_top_k: 10
         save_last: true
     - class_path: decoder.helpers.GradNormCallback
