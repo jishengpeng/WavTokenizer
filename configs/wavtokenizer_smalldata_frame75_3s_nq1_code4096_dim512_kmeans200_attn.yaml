@@ -34,7 +34,7 @@ model:
 
     resume: false
     resume_config: ./WavTokenizer/configs/wavtokenizer_smalldata_frame75_3s_nq1_code16384_dim512_kmeans800_attn.yaml
-    resume_model: ./WavTokenizer/result/train/wavtokenizer_smalldata_frame75_3s_nq1_code16384_dim512_kmeans800_attn/vocos_checkpoint_epoch=35_step=187848_val_loss=4.1611.ckpt
+    resume_model: ./WavTokenizer/result/train/wavtokenizer_smalldata_frame75_3s_nq1_code16384_dim512_kmeans800_attn/xxx.ckpt
 
     feature_extractor:
       class_path: decoder.feature_extractors.EncodecFeatures
@@ -77,7 +77,7 @@ trainer:
     - class_path: pytorch_lightning.callbacks.ModelCheckpoint
       init_args:
         monitor: val_loss
-        filename: vocos_checkpoint_{epoch}_{step}_{val_loss:.4f}
+        filename: wavtokenizer_checkpoint_{epoch}_{step}_{val_loss:.4f}
         save_top_k: 10
         save_last: true
     - class_path: decoder.helpers.GradNormCallback
