@@ -20,7 +20,7 @@ dependencies = [
     "huggingface_hub>=0.23.0",
     "matplotlib>=3.7.1",
     "transformers>=4.28.1",
-    "lightning>=2.0.0",
+    "lightning==2.0.9",
     "numpy>=1.23.5",
     "jsonargparse[signatures]>=4.15.2",
     "einops>=0.6.1",

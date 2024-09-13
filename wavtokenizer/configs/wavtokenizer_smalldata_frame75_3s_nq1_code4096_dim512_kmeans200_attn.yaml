@@ -88,6 +88,6 @@ trainer:
   # You might want to limit val batches when evaluating all the metrics, as they are time-consuming
   limit_val_batches: 100
   accelerator: gpu
-  strategy: ddp
+  strategy: ddp_find_unused_parameters_true # auto for non DDP
   devices: [0,1,2,3,4,5,6,7]
   log_every_n_steps: 1000
