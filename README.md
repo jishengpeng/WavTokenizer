@@ -138,23 +138,18 @@ python train.py fit --config ./configs/xxx.yaml
 If this code contributes to your research, please cite our work, Language-Codec and WavTokenizer:
 
 ```
-@misc{ji2024wavtokenizerefficientacousticdiscrete,
-      title={WavTokenizer: an Efficient Acoustic Discrete Codec Tokenizer for Audio Language Modeling}, 
-      author={Shengpeng Ji and Ziyue Jiang and Xize Cheng and Yifu Chen and Minghui Fang and Jialong Zuo and Qian Yang and Ruiqi Li and Ziang Zhang and Xiaoda Yang and Rongjie Huang and Yidi Jiang and Qian Chen and Siqi Zheng and Wen Wang and Zhou Zhao},
-      year={2024},
-      eprint={2408.16532},
-      archivePrefix={arXiv},
-      primaryClass={eess.AS},
-      url={https://arxiv.org/abs/2408.16532}, 
+@article{ji2024wavtokenizer,
+  title={WavTokenizer: an Efficient Acoustic Discrete Codec Tokenizer for Audio Language Modeling},
+  author={Ji, Shengpeng and Jiang, Ziyue and Cheng, Xize and Chen, Yifu and Fang, Minghui and Zuo, Jialong and Yang, Qian and Li, Ruiqi and Zhang, Ziang and Yang, Xiaoda and others},
+  journal={arXiv preprint arXiv:2408.16532},
+  year={2024}
 }
 
-@misc{ji2024languagecodec,
-      title={Language-Codec: Reducing the Gaps Between Discrete Codec Representation and Speech Language Models}, 
-      author={Shengpeng Ji and Minghui Fang and Ziyue Jiang and Rongjie Huang and Jialung Zuo and Shulei Wang and Zhou Zhao},
-      year={2024},
-      eprint={2402.12208},
-      archivePrefix={arXiv},
-      primaryClass={eess.AS}
+@article{ji2024language,
+  title={Language-codec: Reducing the gaps between discrete codec representation and speech language models},
+  author={Ji, Shengpeng and Fang, Minghui and Jiang, Ziyue and Huang, Rongjie and Zuo, Jialung and Wang, Shulei and Zhao, Zhou},
+  journal={arXiv preprint arXiv:2402.12208},
+  year={2024}
 }
 ```
 
