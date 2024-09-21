@@ -27,7 +27,7 @@ To use WavTokenizer, install it using:
 ```bash
 conda create -n wavtokenizer python=3.9
 conda activate wavtokenizer
-pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Infer
@@ -36,10 +36,10 @@ pip install -r requirements.txt
 
 ```python
 
-from encoder.utils import convert_audio
+from wavtokenizer.encoder.utils import convert_audio
 import torchaudio
 import torch
-from decoder.pretrained import WavTokenizer
+from wavtokenizer.decoder.pretrained import WavTokenizer
 
 
 device=torch.device('cpu')
@@ -65,10 +65,10 @@ torchaudio.save(audio_outpath, audio_out, sample_rate=24000, encoding='PCM_S', b
 ### Part2: Generating discrete codecs
 ```python
 
-from encoder.utils import convert_audio
+from wavtokenizer.encoder.utils import convert_audio
 import torchaudio
 import torch
-from decoder.pretrained import WavTokenizer
+from wavtokenizer.decoder.pretrained import WavTokenizer
 
 device=torch.device('cpu')
 
