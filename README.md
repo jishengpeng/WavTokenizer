@@ -14,6 +14,7 @@ SOTA Discrete Codec Models With Forty Tokens Per Second for Audio Language Model
 ### 🎉🎉 WavTokenizer owns rich semantic information and is build for audio language models such as GPT4-o.
 
 # 🔥 News
+- *2024.11.22* We release WavChat (A survey of spoken dialogue models about 60 pages) on arxiv.
 - *2024.10.22*: We update WavTokenizer on arxiv and release WavTokenizer-Large checkpoint.
 - *2024.09.09*: We release WavTokenizer-medium checkpoint on [huggingface](https://huggingface.co/collections/novateur/wavtokenizer-medium-large-66de94b6fd7d68a2933e4fc0).
 - *2024.08.31*: We release WavTokenizer on arxiv.
