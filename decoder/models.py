@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.nn.utils import weight_norm
 
-from decoder.modules import ConvNeXtBlock, ResBlock1, AdaLayerNorm
+from .modules import ConvNeXtBlock, ResBlock1, AdaLayerNorm
 
 
 def nonlinearity(x):
