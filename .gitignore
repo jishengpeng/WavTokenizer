@@ -5,6 +5,8 @@ __pycache__/
 **venv**
 **.pth
 **.pkl
+*.pyc
+
 
 **.mp3
 **.whisper.json
