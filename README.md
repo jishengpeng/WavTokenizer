@@ -140,8 +140,8 @@ If this code contributes to your research, please cite our work, Language-Codec 
 
 ```
 @article{ji2024wavtokenizer,
-  title={WavTokenizer: an Efficient Acoustic Discrete Codec Tokenizer for Audio Language Modeling},
-  author={Ji, Shengpeng and Jiang, Ziyue and Cheng, Xize and Chen, Yifu and Fang, Minghui and Zuo, Jialong and Yang, Qian and Li, Ruiqi and Zhang, Ziang and Yang, Xiaoda and others},
+  title={Wavtokenizer: an efficient acoustic discrete codec tokenizer for audio language modeling},
+  author={Ji, Shengpeng and Jiang, Ziyue and Wang, Wen and Chen, Yifu and Fang, Minghui and Zuo, Jialong and Yang, Qian and Cheng, Xize and Wang, Zehan and Li, Ruiqi and others},
   journal={arXiv preprint arXiv:2408.16532},
   year={2024}
 }
