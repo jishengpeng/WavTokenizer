@@ -8,11 +8,6 @@ __pycache__/
 *.pyc
 
 
-**.mp3
-**.whisper.json
-
-**jamie-demo-data**
-**cond_data**
 .env.local
 
 # C extensions
