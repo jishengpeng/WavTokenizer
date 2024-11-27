@@ -5,6 +5,9 @@ import torch
 import yaml
 from huggingface_hub import hf_hub_download
 from torch import nn
+import importlib
+
+from ..encoder.utils import convert_audio
 from .feature_extractors import FeatureExtractor, EncodecFeatures
 from .heads import FourierHead
 from .models import Backbone
@@ -23,10 +26,30 @@ def instantiate_class(args: Union[Any, Tuple[Any, ...]], init: Dict[str, Any]) -
     kwargs = init.get("init_args", {})
     if not isinstance(args, tuple):
         args = (args,)
-    class_module, class_name = init["class_path"].rsplit(".", 1)
-    module = __import__(class_module, fromlist=[class_name])
+    
+    class_path = init["class_path"]
+    class_module, class_name = class_path.rsplit(".", 1)
+    _, class_module = class_module.rsplit(".", 1)
+    # Get the current package context dynamically
+    package = __package__
+    # Dynamically prepend the package to the module path
+    if not class_module.startswith(package):
+        class_module = f"{package}.{class_module}"
+
+    # Use importlib to import the module dynamically
+    module = importlib.import_module(class_module)
+
+    # Get the class from the module
     args_class = getattr(module, class_name)
     return args_class(*args, **kwargs)
+
+    # kwargs = init.get("init_args", {})
+    # if not isinstance(args, tuple):
+    #     args = (args,)
+    # class_module, class_name = init["class_path"].rsplit(".", 1)
+    # module = __import__(class_module, fromlist=[class_name])
+    # args_class = getattr(module, class_name)
+    # return args_class(*args, **kwargs)
 
 
 class WavTokenizer(nn.Module):
@@ -38,12 +61,13 @@ class WavTokenizer(nn.Module):
     """
 
     def __init__(
-        self, feature_extractor: FeatureExtractor, backbone: Backbone, head: FourierHead,
+        self, feature_extractor: FeatureExtractor, backbone: Backbone, head: FourierHead, sr:int=24000
     ):
         super().__init__()
         self.feature_extractor = feature_extractor
         self.backbone = backbone
         self.head = head
+        self.sr = sr
 
     @classmethod
     def from_hparams(cls, config_path: str) -> "Vocos":
@@ -73,7 +97,8 @@ class WavTokenizer(nn.Module):
                 for key, value in model.feature_extractor.encodec.state_dict().items()
             }
             state_dict.update(encodec_parameters)
-        model.load_state_dict(state_dict)
+        result = model.load_state_dict(state_dict)
+        print('CHECKPOINT LOADED result', result)
         model.eval()
         return model
 
@@ -109,7 +134,8 @@ class WavTokenizer(nn.Module):
         #         for key, value in model.feature_extractor.encodec.state_dict().items()
         #     }
         #     state_dict.update(encodec_parameters)
-        model.load_state_dict(state_dict)
+        result = model.load_state_dict(state_dict)
+        print('CHECKPOINT LOADED RESULT:', result)
         model.eval()
         return model
 
@@ -187,6 +213,11 @@ class WavTokenizer(nn.Module):
     def encode_infer(self, audio_input: torch.Tensor, **kwargs: Any) -> torch.Tensor:
         features, discrete_codes, _ = self.feature_extractor.infer(audio_input, **kwargs)
         return features,discrete_codes
+    
+    def encode_audio(self, audio_input: torch.Tensor, sr:int, **kwargs: Any) -> torch.Tensor:
+        audio_input = convert_audio(audio_input, sr, self.sr, 1) 
+        return self.encode_infer(audio_input, sr, **kwargs)
+    
 
 
     @torch.inference_mode()

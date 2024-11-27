@@ -88,7 +88,8 @@ def convert_audio(wav: torch.Tensor, sr: int, target_sr: int, target_channels: i
         wav = wav.expand(target_channels, -1)
     else:
         raise RuntimeError(f"Impossible to convert from {channels} to {target_channels}")
-    wav = torchaudio.transforms.Resample(sr, target_sr)(wav)
+    if sr != target_sr:
+        wav = torchaudio.transforms.Resample(sr, target_sr)(wav)
     return wav
 
 
