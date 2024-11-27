@@ -216,7 +216,7 @@ class WavTokenizer(nn.Module):
     
     def encode_audio(self, audio_input: torch.Tensor, sr:int, **kwargs: Any) -> torch.Tensor:
         audio_input = convert_audio(audio_input, sr, self.sr, 1) 
-        return self.encode_infer(audio_input, sr, **kwargs)
+        return self.encode_infer(audio_input, bandwidth_id=torch.tensor([0]), **kwargs)
     
 
 
@@ -268,3 +268,18 @@ class WavTokenizer(nn.Module):
         features = features.transpose(1, 2)
 
         return features
+
+    @torch.inference_mode()
+    def decode_codes(self, codes: torch.Tensor, **kwargs: Any) -> torch.Tensor:
+        """
+        Method to decode audio waveform from codes. The features input is passed through
+        the backbone and the head to reconstruct the audio output.
+
+        Args:
+            features_input (Tensor): The input tensor of features of shape (B, C, L), where B is the batch size,
+                                     C denotes the feature dimension, and L is the sequence length.
+
+        Returns:
+            Tensor: The output tensor representing the reconstructed audio waveform of shape (B, T).
+        """
+        return self.decode(self.codes_to_features(codes), bandwidth_id=torch.tensor([0]), **kwargs)
