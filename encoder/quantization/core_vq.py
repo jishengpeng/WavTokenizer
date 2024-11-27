@@ -385,7 +385,6 @@ class LanguageVectorQuantization(nn.Module):
         all_indices = []
 
         # breakpoint()
-
         n_q = n_q or len(self.layers)
           
         for layer in self.layers[:n_q]:
@@ -397,7 +396,8 @@ class LanguageVectorQuantization(nn.Module):
         # breakpoint()
         # breakpoint()
 
-        out_losses, out_indices = map(torch.stack, (all_losses, all_indices))
+        out_losses = torch.stack(all_losses)
+        out_indices = torch.stack(all_indices, dim=1)
         return quantized_out, out_indices, out_losses
 
     def encode(self, x: torch.Tensor, n_q: tp.Optional[int] = None) -> torch.Tensor:

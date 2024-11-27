@@ -259,12 +259,11 @@ class WavTokenizer(nn.Module):
             codes = codes.unsqueeze(1)
 
         n_bins = self.feature_extractor.encodec.quantizer.bins
-        offsets = torch.arange(0, n_bins * len(codes), n_bins, device=codes.device)
-        embeddings_idxs = codes + offsets.view(-1, 1, 1)
-
+        offsets = torch.arange(0, n_bins * codes.size(1), n_bins, device=codes.device)
+        embeddings_idxs = codes + offsets.view(1, -1, 1)
         tmp=torch.cat([vq.codebook for vq in self.feature_extractor.encodec.quantizer.vq.layers],dim=0)
         # features = torch.nn.functional.embedding(embeddings_idxs, self.feature_extractor.codebook_weights).sum(dim=0)
-        features = torch.nn.functional.embedding(embeddings_idxs, tmp).sum(dim=0)
+        features = torch.nn.functional.embedding(embeddings_idxs, tmp).sum(dim=1)
         features = features.transpose(1, 2)
 
         return features
@@ -282,4 +281,5 @@ class WavTokenizer(nn.Module):
         Returns:
             Tensor: The output tensor representing the reconstructed audio waveform of shape (B, T).
         """
-        return self.decode(self.codes_to_features(codes), bandwidth_id=torch.tensor([0]), **kwargs)
+        features = self.codes_to_features(codes)
+        return self.decode(features, bandwidth_id=torch.tensor([0]), **kwargs)
