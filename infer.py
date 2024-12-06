@@ -11,7 +11,7 @@ import time
 import logging
 
 device1=torch.device('cuda:0')
-device2=torch.device('cpu')
+# device2=torch.device('cpu')
 
 input_path = "./WavTokenizer/data/infer/lirbitts_testclean"
 out_folder = './WavTokenizer/result/infer'
@@ -51,13 +51,15 @@ for i in range(len(x)):
     print(i)
 
     features,discrete_code= wavtokenizer.encode_infer(wav, bandwidth_id=bandwidth_id)
-    features_all.append(features.cpu())
+    features_all.append(features)
 
-wavtokenizer = wavtokenizer.to(device2)
+# wavtokenizer = wavtokenizer.to(device2)
 
 for i in range(len(x)):
 
     bandwidth_id = torch.tensor([0])
+
+    bandwidth_id = bandwidth_id.to(device1) 
 
     print(i)
     audio_out = wavtokenizer.decode(features_all[i], bandwidth_id=bandwidth_id)   
@@ -65,7 +67,7 @@ for i in range(len(x)):
     # breakpoint()                        # (1, 131200)
     audio_path = out_folder + '/' + ll + '/' + x[i].split('/')[-1]
     # os.makedirs(out_folder + '/' + ll, exist_ok=True)
-    torchaudio.save(audio_path, audio_out, sample_rate=24000, encoding='PCM_S', bits_per_sample=16)
+    torchaudio.save(audio_path, audio_out.cpu(), sample_rate=24000, encoding='PCM_S', bits_per_sample=16)
 
 
 
