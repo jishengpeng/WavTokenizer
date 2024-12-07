@@ -387,6 +387,7 @@ class WavTokenizer(VocosExp):
         self.multiperioddisc = MultiPeriodDiscriminator(num_embeddings=len(self.feature_extractor.bandwidths))
         self.multiresddisc = MultiResolutionDiscriminator(num_embeddings=len(self.feature_extractor.bandwidths))
         self.dac = DACDiscriminator()
+        self.dacdiscriminator = DACGANLoss(self.dac)
         if self.resume:
             print('加载预训练模型:', self.resume_model)
             # with open(self.resume_config, "r") as f:
