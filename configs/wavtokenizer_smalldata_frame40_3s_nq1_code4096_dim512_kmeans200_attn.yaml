@@ -84,7 +84,7 @@ trainer:
 
   # Lightning calculates max_steps across all optimizer steps (rather than number of batches)
   # This equals to 1M steps per generator and 1M per discriminator
-  max_steps: 20000000
+  max_steps: 2000000
   # You might want to limit val batches when evaluating all the metrics, as they are time-consuming
   limit_val_batches: 200
   accelerator: gpu
