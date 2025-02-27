@@ -97,8 +97,8 @@ wav, sr = torchaudio.load(audio_path)
 wav = convert_audio(wav, sr, 24000, 1) 
 bandwidth_id = torch.tensor([0])
 wav=wav.to(device)
-_,discrete_code= wavtokenizer.encode_infer(wav, bandwidth_id=bandwidth_id)
-print(discrete_code)
+_,audio_tokens= wavtokenizer.encode_infer(wav, bandwidth_id=bandwidth_id)
+print(audio_tokens)
 ```
 
 
